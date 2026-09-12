@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avirah Health — Coming Soon</title>
+<style>
+  :root {
+    --bg-1: #0f2027;
+    --bg-2: #203a43;
+    --bg-3: #2c5364;
+    --accent: #4fd1c5;
+    --text: #f5f7fa;
+    --text-dim: #b8c4cc;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg-1), var(--bg-2) 50%, var(--bg-3));
+    color: var(--text);
+    text-align: center;
+    overflow-x: hidden;
+  }
+
+  .card {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .logo span {
+    color: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 5vw, 2.75rem);
+    margin: 24px 0 12px;
+    font-weight: 700;
+  }
+
+  p.subtitle {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0 0 32px;
+  }
+
+  .pulse-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    box-shadow: 0 0 0 0 rgba(79, 209, 197, 0.7);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(79, 209, 197, 0.6); }
+    70% { box-shadow: 0 0 0 10px rgba(79, 209, 197, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(79, 209, 197, 0); }
+  }
+
+  .notify {
+    display: flex;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .notify input[type="email"] {
+    flex: 1 1 220px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .notify input[type="email"]::placeholder {
+    color: var(--text-dim);
+  }
+
+  .notify input[type="email"]:focus {
+    border-color: var(--accent);
+  }
+
+  .notify button {
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #0f2027;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .notify button:hover {
+    opacity: 0.85;
+  }
+
+  .notify-msg {
+    min-height: 1.2em;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-top: -28px;
+    margin-bottom: 28px;
+  }
+
+  .counter-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .counter-box strong {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+  }
+
+  footer {
+    margin-top: 36px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="logo">AVIRAH <span>HEALTH</span></div>
+
+    <h1><span class="pulse-dot"></span>Something great is coming</h1>
+    <p class="subtitle">
+      We're building a better way to take care of your health.
+      Leave your email and we'll let you know the moment we launch.
+    </p>
+
+    <form class="notify" id="notify-form">
+      <input type="email" id="notify-email" placeholder="you@example.com" required>
+      <button type="submit">Notify Me</button>
+    </form>
+    <div class="notify-msg" id="notify-msg"></div>
+
+    <div class="counter-box">
+      👀 <span>Visitors so far:</span> <strong id="visitor-count">…</strong>
+    </div>
+
+    <footer>&copy; <span id="year"></span> Avirah Health. All rights reserved.</footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Email capture (stored locally only — wire this up to a real backend/service later)
+    document.getElementById('notify-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('notify-email').value.trim();
+      var msg = document.getElementById('notify-msg');
+      if (!email) return;
+      try {
+        var list = JSON.parse(localStorage.getItem('avirah_notify_list') || '[]');
+        if (!list.includes(email)) list.push(email);
+        localStorage.setItem('avirah_notify_list', JSON.stringify(list));
+      } catch (err) { /* ignore storage errors */ }
+      msg.textContent = "Thanks! We'll email you at launch.";
+      document.getElementById('notify-email').value = '';
+    });
+
+    // Visitor counter using CountAPI (free, no signup) with a localStorage fallback
+    // so the count still works if the page is opened offline or the API is unreachable.
+    (function () {
+      var el = document.getElementById('visitor-count');
+      var NAMESPACE = 'avirah-health';
+      var KEY = 'coming-soon-visits';
+
+      function showFallbackCount() {
+        try {
+          var count = parseInt(localStorage.getItem('avirah_visit_count') || '0', 10) + 1;
+          localStorage.setItem('avirah_visit_count', String(count));
+          el.textContent = count.toLocaleString();
+        } catch (err) {
+          el.textContent = '1';
+        }
+      }
+
+      fetch('https://api.countapi.xyz/hit/' + NAMESPACE + '/' + KEY)
+        .then(function (res) {
+          if (!res.ok) throw new Error('bad response');
+          return res.json();
+        })
+        .then(function (data) {
+          el.textContent = Number(data.value).toLocaleString();
+        })
+        .catch(showFallbackCount);
+    })();
+  </script>
+
+</body>
+</html>
